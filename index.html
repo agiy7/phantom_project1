@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHANTOM — the escape room hackathon by Hack Club</title>
+<meta name="description" content="PHANTOM is a free 3-day escape room hackathon for teens in Philadelphia, Feb 12–14, 2027, run by Hack Club. Build for 50 hours to earn your invite.">
+<style>
+  :root {
+    --bg: #14131a;
+    --panel: #1f1d29;
+    --panel-2: #292636;
+    --text: #f4f2fa;
+    --muted: #a9a5bd;
+    --red: #ec3750;
+    --glow: #8a7dff;
+    --yellow: #ffd166;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(20,19,26,.85); backdrop-filter: blur(10px); border-bottom: 1px solid #2c2a3a; }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-weight: 800; letter-spacing: .18em; text-decoration: none; }
+  .logo span { color: var(--glow); }
+  nav ul { display: flex; gap: 22px; list-style: none; font-size: .95rem; }
+  nav a { text-decoration: none; color: var(--muted); }
+  nav a:hover { color: var(--text); }
+  @media (max-width: 640px) { nav ul { display: none; } }
+
+  /* Hero */
+  .hero { text-align: center; padding: 96px 0 72px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: -20% -10% auto -10%; height: 520px;
+    background: radial-gradient(ellipse at center, rgba(138,125,255,.28), transparent 65%);
+    pointer-events: none;
+  }
+  .ghost { font-size: 4rem; display: inline-block; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 22px rgba(138,125,255,.7)); }
+  @keyframes float { 50% { transform: translateY(-14px); } }
+  @media (prefers-reduced-motion: reduce) { .ghost { animation: none; } html { scroll-behavior: auto; } }
+  .eyebrow { margin-top: 12px; color: var(--glow); font-weight: 700; letter-spacing: .16em; font-size: .85rem; text-transform: uppercase; }
+  h1 { font-size: clamp(3rem, 11vw, 6.5rem); line-height: 1; letter-spacing: .06em; margin: 10px 0 18px; }
+  .tagline { max-width: 640px; margin: 0 auto 32px; color: var(--muted); font-size: 1.2rem; }
+  .btn { display: inline-block; padding: 14px 30px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 700; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(236,55,80,.4); }
+  .btn.ghosty { background: transparent; border: 2px solid #3a3750; margin-left: 10px; }
+  .btn.ghosty:hover { box-shadow: none; border-color: var(--glow); }
+
+  /* Countdown */
+  .countdown { display: flex; justify-content: center; gap: 14px; margin-top: 48px; flex-wrap: wrap; }
+  .tick { background: var(--panel); border: 1px solid #2f2c40; border-radius: 14px; padding: 14px 20px; min-width: 92px; }
+  .tick b { display: block; font-size: 2rem; font-variant-numeric: tabular-nums; }
+  .tick small { color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-size: .7rem; }
+  .countdown-label { margin-top: 14px; color: var(--muted); font-size: .9rem; }
+
+  section { padding: 72px 0; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 14px; }
+  .lead { color: var(--muted); max-width: 680px; font-size: 1.1rem; }
+
+  /* Fact cards */
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 36px; }
+  .fact { background: var(--panel); border-radius: var(--radius); padding: 24px; }
+  .fact .big { font-size: 1.9rem; font-weight: 800; color: var(--yellow); }
+  .fact p { color: var(--muted); font-size: .95rem; margin-top: 4px; }
+
+  /* Steps */
+  .steps { list-style: none; margin-top: 36px; display: grid; gap: 14px; counter-reset: s; }
+  .steps li { counter-increment: s; background: var(--panel); border-radius: var(--radius); padding: 20px 24px 20px 78px; position: relative; }
+  .steps li::before {
+    content: counter(s); position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; background: var(--glow); color: #14131a;
+    display: grid; place-items: center; font-weight: 800;
+  }
+  .steps strong { display: block; font-size: 1.1rem; }
+  .steps span { color: var(--muted); }
+
+  /* Stay + stipend */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; }
+  @media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border-radius: var(--radius); padding: 28px; }
+  .card h3 { margin-bottom: 8px; }
+  .card p { color: var(--muted); }
+  .rate { font-size: 2.4rem; font-weight: 800; color: var(--yellow); }
+
+  /* Shop */
+  .shop { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 36px; }
+  .item { background: var(--panel-2); border-radius: var(--radius); padding: 22px; }
+  .item h3 { font-size: 1.05rem; }
+  .item .cost { margin-top: 10px; font-size: 1.5rem; font-weight: 800; color: var(--yellow); }
+  .item .cost s { color: var(--muted); font-size: 1rem; font-weight: 500; margin-right: 6px; }
+  .item small { color: var(--muted); }
+  .note { margin-top: 18px; color: var(--muted); font-size: .9rem; }
+
+  /* About */
+  .about { background: var(--panel); border-radius: 28px; padding: 44px; margin-top: 8px; }
+  .about p { color: var(--muted); max-width: 720px; margin-top: 10px; }
+
+  .cta { text-align: center; padding: 88px 0; }
+  .cta h2 { margin-bottom: 22px; }
+
+  footer { border-top: 1px solid #2c2a3a; padding: 32px 0 48px; color: var(--muted); font-size: .88rem; text-align: center; }
+  footer p + p { margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">PHAN<span>TOM</span></a>
+    <ul>
+      <li><a href="#what">What is it</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#perks">Perks</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#about">Hack Club</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="ghost" aria-hidden="true">👻</div>
+    <p class="eyebrow">A Hack Club program</p>
+    <h1>PHANTOM</h1>
+    <p class="tagline">Build creative projects for 50 hours, then spend a long weekend in an escape room hackathon in Philadelphia.</p>
+    <a class="btn" href="https://phantom.hackclub.com/" target="_blank" rel="noopener">Start building</a>
+    <a class="btn ghosty" href="#how">How it works</a>
+
+    <div class="countdown" id="countdown" aria-live="off">
+      <div class="tick"><b id="d">--</b><small>days</small></div>
+      <div class="tick"><b id="h">--</b><small>hours</small></div>
+      <div class="tick"><b id="m">--</b><small>minutes</small></div>
+      <div class="tick"><b id="s">--</b><small>seconds</small></div>
+    </div>
+    <p class="countdown-label" id="countdown-label">until the event starts, Feb 12, 2027</p>
+  </div>
+</header>
+
+<section id="what">
+  <div class="wrap">
+    <h2>What is PHANTOM?</h2>
+    <p class="lead">PHANTOM is a free, 3-day escape room hackathon for teens in Philadelphia, run by Hack Club. You earn your invite by building projects, then meet everyone else who earned theirs in a venue full of puzzles.</p>
+    <div class="facts">
+      <div class="fact"><div class="big">Feb 12–14</div><p>2027, three days in Philadelphia, PA</p></div>
+      <div class="fact"><div class="big">50 hours</div><p>of building to earn your invite</p></div>
+      <div class="fact"><div class="big">Free</div><p>for teens, with stay and food covered</p></div>
+      <div class="fact"><div class="big">Any project</div><p>a game, a tool, hardware or anything creative</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lead">Build on one project or several. There is no single right idea.</p>
+    <ol class="steps">
+      <li><strong>Get an idea</strong><span>Pick any project you want to make.</span></li>
+      <li><strong>Start building</strong><span>Plan it, sketch it, or just start writing code.</span></li>
+      <li><strong>Log your hours</strong><span>Hackatime counts the time you spend coding.</span></li>
+      <li><strong>Ship it</strong><span>Submit the project for review.</span></li>
+      <li><strong>Earn fragments</strong><span>Every approved hour turns into fragments.</span></li>
+      <li><strong>Claim your invite</strong><span>Spend 50 hours' worth of fragments on your invite to Philadelphia, or on shop prizes if you can't make it.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section id="perks">
+  <div class="wrap">
+    <h2>Stay, food and flights</h2>
+    <p class="lead">Earning an invite means the weekend itself is taken care of.</p>
+    <div class="split">
+      <div class="card">
+        <h3>Your stay and food are covered</h3>
+        <p>Lodging and meals are included for everyone who earns an invite.</p>
+      </div>
+      <div class="card">
+        <h3>Flight stipend</h3>
+        <div class="rate">$8.50 / hour</div>
+        <p>Work you do after getting your ticket counts toward a flight stipend. Can't attend? It counts toward shop prizes instead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shop">
+  <div class="wrap">
+    <h2>Shop prizes</h2>
+    <p class="lead">Fragments can also be spent in the shop. Here is a sample of what's on offer.</p>
+    <div class="shop">
+      <div class="item"><h3>Anbernic RG DS Plus</h3><div class="cost">190</div><small>fragments · about 19 hours</small></div>
+      <div class="item"><h3>11-inch iPad Air</h3><div class="cost"><s>1,500</s>1,305</div><small>fragments · about 130.5 hours · 13% off</small></div>
+      <div class="item"><h3>UGREEN Nexode power bank (20,000)</h3><div class="cost"><s>200</s>140</div><small>fragments · about 14 hours · 30% off</small></div>
+      <div class="item"><h3>Hack Club pin</h3><div class="cost">40</div><small>fragments · about 4 hours</small></div>
+    </div>
+    <p class="note">Prices and sales change. Check the official shop for the current list.</p>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="about">
+      <h2>Who is behind it?</h2>
+      <p>PHANTOM is by Archer, David and Santi, and is run by Hack Club, a 501(c)(3) nonprofit and network of more than 100,000 technical high schoolers. Hack Club gives teens community and grants to build projects, and has run events like Capitol, a 36-hour hackathon in Washington, D.C.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Ready to haunt Philadelphia?</h2>
+    <a class="btn" href="https://phantom.hackclub.com/" target="_blank" rel="noopener">Go to the official site</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>An unofficial explainer page. All details come from the official PHANTOM site and may change.</p>
+    <p>PHANTOM and Hack Club belong to their respective owners.</p>
+  </div>
+</footer>
+
+<script>
+  // Countdown to the start of the event (Feb 12, 2027, Philadelphia time)
+  var start = new Date("2027-02-12T00:00:00-05:00").getTime();
+  var end = new Date("2027-02-14T23:59:59-05:00").getTime();
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function tick() {
+    var now = Date.now();
+    var label = document.getElementById("countdown-label");
+    var diff = start - now;
+    if (diff <= 0) {
+      diff = 0;
+      label.textContent = now <= end ? "PHANTOM is happening right now!" : "PHANTOM has wrapped up. See you next time!";
+    }
+    var s = Math.floor(diff / 1000);
+    document.getElementById("d").textContent = Math.floor(s / 86400);
+    document.getElementById("h").textContent = pad(Math.floor(s % 86400 / 3600));
+    document.getElementById("m").textContent = pad(Math.floor(s % 3600 / 60));
+    document.getElementById("s").textContent = pad(s % 60);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
